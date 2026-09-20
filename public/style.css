@@ -203,3 +203,30 @@ input[type="file"] { display: block; margin-bottom: 0.75rem; font-size: 0.85rem;
 .bloqueado-msg { color: var(--muted); }
 .vacio { color: var(--muted); }
 .resultado { color: var(--muted); font-size: 0.9rem; }
+
+/* --- Login (feature/port-a-nodejs) --- */
+body:has(.login-box) { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+.login-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem;
+    width: 100%;
+    max-width: 320px;
+}
+.login-box h1 { font-size: 1.1rem; margin-top: 0; text-align: center; }
+.login-box label { display: block; margin-bottom: 0.9rem; font-size: 0.85rem; color: var(--muted); }
+.login-box input {
+    display: block;
+    width: 100%;
+    margin-top: 0.3rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 0.9rem;
+}
+.login-box button { width: 100%; margin-top: 0.5rem; }
+.error { color: #dc2626; font-size: 0.85rem; }
