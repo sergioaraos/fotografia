@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ingresar - Aprender Fotografia de Cero</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="login-box">
+        <h1>Aprender Fotografia de Cero</h1>
+        <% if (error) { %>
+        <p class="error"><%= error %></p>
+        <% } %>
+        <form method="post" action="/login">
+            <label>Usuario<input type="text" name="usuario" required autofocus></label>
+            <label>Contrasena<input type="password" name="password" required></label>
+            <button type="submit">Ingresar</button>
+        </form>
+    </div>
+</body>
+</html>

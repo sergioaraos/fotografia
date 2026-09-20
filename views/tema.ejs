@@ -1,0 +1,117 @@
+<%- include('partials/header') %>
+<h2><%= tema.titulo %></h2>
+
+<% if (bloqueado) { %>
+<p class="bloqueado-msg">&#128274; Este tema esta bloqueado. Completa el tema anterior para desbloquearlo.</p>
+<% } else { %>
+
+<nav class="tabs">
+    <a href="/tema/<%= tema.slug %>?tab=teoria" data-tab="teoria" class="<%= tab === 'teoria' ? 'activo' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Teoria
+    </a>
+    <a href="/tema/<%= tema.slug %>?tab=ejemplos" data-tab="ejemplos" class="<%= tab === 'ejemplos' ? 'activo' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+        Ejemplos
+    </a>
+    <a href="/tema/<%= tema.slug %>?tab=ejercicios" data-tab="ejercicios" class="<%= tab === 'ejercicios' ? 'activo' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Ejercicios
+    </a>
+    <a href="/tema/<%= tema.slug %>?tab=fotos" data-tab="fotos" class="<%= tab === 'fotos' ? 'activo' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        Fotos
+    </a>
+    <a href="/tema/<%= tema.slug %>?tab=evaluacion" data-tab="evaluacion" class="<%= tab === 'evaluacion' ? 'activo' : '' %>">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Evaluacion
+    </a>
+</nav>
+
+<% if (tab === 'teoria') { %>
+<section class="tab-panel">
+    <%- teoriaHtml %>
+</section>
+
+<% } else if (tab === 'ejemplos') { %>
+<section class="tab-panel">
+    <% if (ejemplos.length === 0) { %>
+    <p class="vacio">Sin ejemplos para este tema.</p>
+    <% } %>
+    <% ejemplos.forEach(function(ejemplo) { %>
+    <div class="ejemplo">
+        <p><%= ejemplo.descripcion %></p>
+        <% if (ejemplo.url_o_fuente) { %><p><a href="<%= ejemplo.url_o_fuente %>" target="_blank">Ver referencia</a></p><% } %>
+    </div>
+    <% }); %>
+</section>
+
+<% } else if (tab === 'ejercicios') { %>
+<section class="tab-panel">
+    <% if (ejercicios.length === 0) { %>
+    <p class="vacio">Este tema no tiene ejercicios practicos.</p>
+    <% } %>
+    <% ejercicios.forEach(function(item) { %>
+    <div class="ejercicio <%= item.completado ? 'completado' : '' %>">
+        <h3><%= item.ejercicio.titulo %> <% if (item.completado) { %>&check;<% } %></h3>
+        <p><%= item.ejercicio.descripcion %></p>
+        <% if (!item.completado) { %>
+        <form method="post" action="/ejercicios/<%= item.ejercicio.id %>/foto" enctype="multipart/form-data">
+            <input type="file" name="foto" accept="image/jpeg" required>
+            <button type="submit">Subir foto</button>
+        </form>
+        <% } %>
+    </div>
+    <% }); %>
+</section>
+
+<% } else if (tab === 'fotos') { %>
+<section class="tab-panel">
+    <% var hayFotos = ejercicios.some(function(item) { return item.fotos.length > 0; }); %>
+    <% if (!hayFotos) { %>
+    <p class="vacio">Todavia no hay fotos subidas en este tema.</p>
+    <% } %>
+    <% ejercicios.forEach(function(item) { %>
+    <% item.fotos.forEach(function(foto) { %>
+    <div class="foto <%= foto.estado %>">
+        <img src="/uploads/<%= foto.ruta_archivo %>" alt="foto subida" width="240">
+        <p><%= item.ejercicio.titulo %> &mdash; estado: <%= foto.estado %></p>
+    </div>
+    <% }); %>
+    <% }); %>
+</section>
+
+<% } else if (tab === 'evaluacion') { %>
+<section class="tab-panel">
+    <% if (evaluaciones.length === 0) { %>
+    <p class="vacio">Este tema no tiene evaluacion.</p>
+    <% } %>
+    <% evaluaciones.forEach(function(item) { %>
+    <div class="evaluacion <%= item.aprobada ? 'completado' : '' %>">
+        <h3><%= item.evaluacion.titulo %> <% if (item.aprobada) { %>&check;<% } %></h3>
+        <% if (!item.aprobada) { %>
+        <form method="post" action="/evaluaciones/<%= item.evaluacion.id %>/responder">
+            <% item.preguntas.forEach(function(preguntaItem) { %>
+            <fieldset>
+                <legend><%= preguntaItem.pregunta.texto %></legend>
+                <% preguntaItem.alternativas.forEach(function(alternativa) { %>
+                <label>
+                    <input type="radio" name="pregunta_<%= preguntaItem.pregunta.id %>" value="<%= alternativa.id %>" required>
+                    <%= alternativa.texto %>
+                </label><br>
+                <% }); %>
+            </fieldset>
+            <% }); %>
+            <button type="submit">Responder</button>
+        </form>
+        <% if (item.ultimoIntento && !item.aprobada) { %>
+        <p class="resultado">Ultimo intento: <%= item.ultimoIntento.correctas %>/<%= item.ultimoIntento.total %> correctas.</p>
+        <% } %>
+        <% } %>
+    </div>
+    <% }); %>
+</section>
+<% } %>
+
+<% } %>
+<%- include('partials/footer') %>
