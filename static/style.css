@@ -1,0 +1,31 @@
+:root {
+    color-scheme: light dark;
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #666;
+    --accent: #2563eb;
+    --border: #ddd;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #121212;
+        --fg: #eaeaea;
+        --muted: #999;
+        --accent: #60a5fa;
+        --border: #333;
+    }
+}
+body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+.layout { display: flex; min-height: 100vh; }
+.menu { width: 260px; padding: 1rem; border-right: 1px solid var(--border); }
+.menu h1 { font-size: 1.1rem; }
+.menu ul { list-style: none; padding: 0; }
+.menu li { padding: 0.4rem 0; }
+.menu li.bloqueado { color: var(--muted); }
+.menu li.completado a { color: green; }
+.contenido { flex: 1; padding: 2rem; max-width: 720px; }
+.ejercicio { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+.ejercicio.completado { border-color: green; }
+fieldset { border: none; margin-bottom: 1rem; }
+.foto img { border-radius: 4px; margin-top: 0.5rem; }
+.bloqueado-msg { color: var(--muted); }

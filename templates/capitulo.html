@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ capitulo.titulo }}</h2>
+
+{% if bloqueado %}
+<p class="bloqueado-msg">&#128274; Este capitulo esta bloqueado. Completa el capitulo anterior para desbloquearlo.</p>
+{% else %}
+
+<section class="teoria">
+    {{ teoria_html | safe }}
+</section>
+
+<section class="ejercicios">
+    {% for item in ejercicios %}
+    <div class="ejercicio {% if item.completado %}completado{% endif %}">
+        <h3>{{ item.ejercicio.titulo }} {% if item.completado %}&check;{% endif %}</h3>
+        <p>{{ item.ejercicio.descripcion }}</p>
+
+        {% if item.ejercicio.tipo == 'quiz' and not item.completado %}
+        <form method="post" action="/ejercicios/{{ item.ejercicio.id }}/quiz">
+            {% for pregunta_item in item.preguntas %}
+            <fieldset>
+                <legend>{{ pregunta_item.pregunta.texto }}</legend>
+                {% for alternativa in pregunta_item.alternativas %}
+                <label>
+                    <input type="radio" name="pregunta_{{ pregunta_item.pregunta.id }}" value="{{ alternativa.id }}" required>
+                    {{ alternativa.texto }}
+                </label><br>
+                {% endfor %}
+            </fieldset>
+            {% endfor %}
+            <button type="submit">Responder</button>
+        </form>
+        {% endif %}
+
+        {% if item.ejercicio.tipo == 'foto' %}
+        {% if not item.completado %}
+        <form method="post" action="/ejercicios/{{ item.ejercicio.id }}/foto" enctype="multipart/form-data">
+            <input type="file" name="foto" accept="image/jpeg" required>
+            <button type="submit">Subir foto</button>
+        </form>
+        {% endif %}
+        {% for foto in item.fotos %}
+        <div class="foto {{ foto.estado }}">
+            <img src="/uploads/{{ foto.ruta_archivo }}" alt="foto subida" width="240">
+            <p>Estado: {{ foto.estado }}</p>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    {% endfor %}
+</section>
+
+{% endif %}
+{% endblock %}
