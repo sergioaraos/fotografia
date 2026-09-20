@@ -15,6 +15,15 @@ const { requireAuth } = require('./middleware/auth');
 
 const conn = db.abrirBaseDeDatos();
 
+// SERGIO 2026-09-20: en Cloudways no hay acceso SSH para correr "npm run seed" a mano,
+// asi que si la base de datos esta vacia (primer arranque en un despliegue nuevo), se
+// cargan los datos de ejemplo automaticamente. No hace nada si ya hay capitulos
+// cargados, asi que es seguro que corra en cada reinicio del servidor.
+const { cargarDatosEjemplo } = require('./scripts/datos-ejemplo');
+if (cargarDatosEjemplo(conn)) {
+  console.log('Base de datos vacia: se cargaron los datos de ejemplo automaticamente.');
+}
+
 const SqliteStore = require('better-sqlite3-session-store')(session);
 const crearRutasContenido = require('./routes/contenido');
 
