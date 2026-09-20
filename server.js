@@ -1,5 +1,10 @@
 // SERGIO 2026-09-20: servidor Express, portado desde main.py (FastAPI)
 // (feature/port-a-nodejs)
+// SERGIO 2026-09-20: carga el archivo .env a process.env. Sin esto, Node ignora el .env
+// por completo y PORT/APP_LOGIN_USER/APP_LOGIN_PASSWORD/SESSION_SECRET quedan siempre
+// undefined (esto causo el bug donde PORT=3010 en .env no tenia ningun efecto y el
+// servidor seguia intentando usar el puerto 3000 por defecto).
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
