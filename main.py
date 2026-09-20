@@ -67,6 +67,9 @@ def ver_capitulo(request: Request, slug: str):
         "capitulo": capitulo,
         "introduccion_html": markdown.markdown(capitulo["introduccion_md"] or ""),
         "active_capitulo_id": capitulo["id"],
+        # SERGIO 2026-09-20: distingue "acordeon abierto" de "pagina que se esta viendo"
+        "pagina_actual_tipo": "capitulo",
+        "pagina_actual_id": capitulo["id"],
     }
     return templates.TemplateResponse(request, "capitulo.html", contexto)
 
@@ -84,6 +87,8 @@ def ver_subcapitulo(request: Request, slug: str):
         "introduccion_html": markdown.markdown(subcapitulo["introduccion_md"] or ""),
         "active_capitulo_id": subcapitulo["capitulo_id"],
         "active_subcapitulo_id": subcapitulo["id"],
+        "pagina_actual_tipo": "subcapitulo",
+        "pagina_actual_id": subcapitulo["id"],
     }
     return templates.TemplateResponse(request, "subcapitulo.html", contexto)
 
@@ -96,12 +101,20 @@ def ver_tema(request: Request, slug: str, tab: str = "teoria"):
             request, "index.html", {**_contexto_menu(), "error": "Tema no encontrado"}, status_code=404
         )
 
+    conn = database.get_connection()
+    capitulo_id_fila = conn.execute(
+        "SELECT capitulo_id FROM subcapitulos WHERE id = ?", (tema["subcapitulo_id"],)
+    ).fetchone()
+    conn.close()
+
     desbloqueado = progreso.tema_desbloqueado(slug)
     contexto = {
         **_contexto_menu(),
         "tema": tema,
         "active_tema_id": tema["id"],
-        "active_capitulo_id": None,
+        # SERGIO 2026-09-20: sin esto el <details> del capitulo quedaba cerrado y
+        # ocultaba el subcapitulo abierto que tiene adentro
+        "active_capitulo_id": capitulo_id_fila["capitulo_id"] if capitulo_id_fila else None,
         "active_subcapitulo_id": tema["subcapitulo_id"],
         "bloqueado": not desbloqueado,
         "tab": tab,

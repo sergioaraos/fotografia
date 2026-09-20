@@ -1,49 +1,205 @@
 :root {
     color-scheme: light dark;
-    --bg: #ffffff;
-    --fg: #1a1a1a;
-    --muted: #666;
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --fg: #17181c;
+    --muted: #6b7280;
+    --border: #e5e7eb;
     --accent: #2563eb;
-    --border: #ddd;
+    --accent-fg: #ffffff;
+    --radius: 12px;
+    --shadow: 0 1px 2px rgba(0,0,0,0.05), 0 4px 16px rgba(0,0,0,0.04);
+
+    --c-teoria: #2563eb;
+    --c-ejemplos: #7c3aed;
+    --c-ejercicios: #d97706;
+    --c-fotos: #db2777;
+    --c-evaluacion: #059669;
 }
 @media (prefers-color-scheme: dark) {
     :root {
-        --bg: #121212;
-        --fg: #eaeaea;
-        --muted: #999;
+        --bg: #0f1115;
+        --surface: #181b22;
+        --fg: #e9eaee;
+        --muted: #9096a2;
+        --border: #2a2e37;
         --accent: #60a5fa;
-        --border: #333;
+        --accent-fg: #0f1115;
+        --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35);
+
+        --c-teoria: #60a5fa;
+        --c-ejemplos: #a78bfa;
+        --c-ejercicios: #fbbf24;
+        --c-fotos: #f472b6;
+        --c-evaluacion: #34d399;
     }
 }
-body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+}
 a { color: var(--accent); }
+
 .layout { display: flex; min-height: 100vh; }
 
-.menu { width: 280px; padding: 1rem; border-right: 1px solid var(--border); overflow-y: auto; }
-.menu h1 { font-size: 1.05rem; }
+/* --- Menu / acordeon --- */
+.menu {
+    width: 300px;
+    flex-shrink: 0;
+    padding: 1.25rem 1rem;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+}
+.menu h1 { font-size: 1.05rem; margin: 0 0 1.25rem; }
 .menu h1 a { color: var(--fg); text-decoration: none; }
-.menu details { margin-bottom: 0.25rem; }
-.menu details.subcapitulo { margin-left: 0.75rem; }
-.menu summary { cursor: pointer; padding: 0.2rem 0; }
-.menu ul { list-style: none; padding-left: 1.25rem; margin: 0.25rem 0; }
-.menu li { padding: 0.15rem 0; }
-.menu li a { text-decoration: none; }
+
+.menu details { margin-bottom: 0.35rem; border-radius: var(--radius); }
+.menu details.subcapitulo { margin-left: 0.6rem; margin-top: 0.35rem; }
+
+.menu summary {
+    cursor: pointer;
+    list-style: none;
+    padding: 0.5rem 0.6rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    font-size: 0.92rem;
+    transition: background 0.15s ease;
+}
+.menu details.subcapitulo > summary { font-weight: 500; font-size: 0.87rem; }
+.menu summary::-webkit-details-marker { display: none; }
+.menu summary::before {
+    content: "";
+    width: 0.55rem;
+    height: 0.55rem;
+    border-right: 2px solid var(--muted);
+    border-bottom: 2px solid var(--muted);
+    transform: rotate(-45deg);
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+}
+.menu details[open] > summary::before { transform: rotate(45deg); }
+.menu summary:hover { background: var(--bg); }
+.menu summary a { text-decoration: none; color: inherit; flex: 1; }
+.menu summary.activo { background: var(--accent); }
+.menu summary.activo a { color: var(--accent-fg); }
+.menu summary.activo::before { border-color: var(--accent-fg); }
+
+.menu ul { list-style: none; padding-left: 1.4rem; margin: 0.2rem 0 0.4rem; }
+.menu li { padding: 0.2rem 0; }
+.menu li a {
+    text-decoration: none;
+    color: var(--fg);
+    font-size: 0.87rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    transition: background 0.15s ease;
+}
+.menu li a:hover { background: var(--bg); }
+.menu li.activo a { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
 .menu li.bloqueado { color: var(--muted); }
-.menu li.completado a { color: green; }
-.menu li.activo a { font-weight: bold; }
-.menu .vacio { color: var(--muted); font-size: 0.9rem; margin-left: 1.25rem; }
+.menu li.bloqueado span { display: flex; align-items: center; gap: 0.4rem; font-size: 0.87rem; padding: 0.25rem 0.5rem; color: var(--muted); }
+.menu li.completado a:not(:hover) { color: var(--c-evaluacion); }
+.menu .icon-check { color: var(--c-evaluacion); }
+.menu .vacio { color: var(--muted); font-size: 0.82rem; margin-left: 1.4rem; }
 
-.contenido { flex: 1; padding: 2rem; max-width: 760px; }
+/* --- Contenido --- */
+.contenido { flex: 1; padding: 2.5rem 3rem; max-width: 820px; }
+.contenido h2 { font-size: 1.5rem; margin-bottom: 1.25rem; }
+.introduccion, .tab-panel { line-height: 1.65; }
 
-.tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
-.tabs a { padding: 0.5rem 1rem; text-decoration: none; color: var(--fg); border-bottom: 2px solid transparent; }
-.tabs a.activo { border-bottom: 2px solid var(--accent); color: var(--accent); font-weight: bold; }
+/* --- Tabs --- */
+.tabs { display: flex; gap: 0.35rem; border-bottom: 1px solid var(--border); margin-bottom: 1.75rem; flex-wrap: wrap; padding-bottom: 0; }
+.tabs a {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.1rem;
+    text-decoration: none;
+    color: var(--muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -1px 3px rgba(0,0,0,0.03);
+    position: relative;
+    top: 1px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+.tabs a:hover { color: var(--fg); }
+.tabs a[data-tab="teoria"].activo { color: var(--c-teoria); }
+.tabs a[data-tab="ejemplos"].activo { color: var(--c-ejemplos); }
+.tabs a[data-tab="ejercicios"].activo { color: var(--c-ejercicios); }
+.tabs a[data-tab="fotos"].activo { color: var(--c-fotos); }
+.tabs a[data-tab="evaluacion"].activo { color: var(--c-evaluacion); }
+.tabs a.activo {
+    background: var(--bg);
+    border-color: var(--border);
+    border-bottom: 1px solid var(--bg);
+}
+.tabs svg { width: 1rem; height: 1rem; flex-shrink: 0; }
 
-.ejercicio, .evaluacion { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
-.ejercicio.completado, .evaluacion.completado { border-color: green; }
-fieldset { border: none; margin-bottom: 1rem; padding: 0; }
-.foto { margin-bottom: 1rem; }
-.foto img { border-radius: 4px; display: block; margin-top: 0.5rem; }
+/* --- Tarjetas (ejercicio / evaluacion / ejemplo / foto) --- */
+.ejercicio, .evaluacion, .ejemplo {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.25rem 1.4rem;
+    margin-bottom: 1rem;
+}
+.ejercicio { border-left: 3px solid var(--c-ejercicios); }
+.evaluacion { border-left: 3px solid var(--c-evaluacion); }
+.ejemplo { border-left: 3px solid var(--c-ejemplos); }
+.ejercicio.completado, .evaluacion.completado { border-left-color: var(--c-evaluacion); }
+.ejercicio h3, .evaluacion h3 { margin-top: 0; font-size: 1rem; display: flex; align-items: center; gap: 0.4rem; }
+
+fieldset { border: none; margin: 0 0 1.1rem; padding: 0; }
+fieldset legend { font-weight: 600; margin-bottom: 0.5rem; }
+fieldset label { display: block; padding: 0.35rem 0; cursor: pointer; }
+
+button {
+    background: var(--accent);
+    color: var(--accent-fg);
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+button:hover { opacity: 0.9; }
+
+input[type="file"] { display: block; margin-bottom: 0.75rem; font-size: 0.85rem; }
+
+.foto {
+    display: inline-block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 0.75rem;
+    margin: 0 0.75rem 0.75rem 0;
+    vertical-align: top;
+}
+.foto img { border-radius: 8px; display: block; max-width: 240px; }
+.foto p { font-size: 0.82rem; color: var(--muted); margin: 0.5rem 0 0; }
+.foto.aprobada { border-color: var(--c-evaluacion); }
+
 .bloqueado-msg { color: var(--muted); }
 .vacio { color: var(--muted); }
 .resultado { color: var(--muted); font-size: 0.9rem; }

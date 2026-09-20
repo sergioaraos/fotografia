@@ -75,3 +75,28 @@ def test_capitulo_muestra_introduccion(tmp_path, monkeypatch):
     respuesta = client.get("/capitulo/cap-1")
     assert respuesta.status_code == 200
     assert "resumen del capitulo" in respuesta.text
+
+def test_ver_tema_marca_su_capitulo_como_activo(tmp_path, monkeypatch):
+    # SERGIO 2026-09-20: regresion del bug donde el acordeon del capitulo se
+    # cerraba y ocultaba el subcapitulo/tema activo al entrar a un tema
+    monkeypatch.setattr(database, "DB_PATH", tmp_path / "test.db")
+    database.init_db()
+    conn = database.get_connection()
+    conn.execute("INSERT INTO capitulos (orden, titulo, slug) VALUES (1, 'Cap 1', 'cap-1')")
+    capitulo_id = conn.execute("SELECT id FROM capitulos WHERE slug = 'cap-1'").fetchone()["id"]
+    conn.execute(
+        "INSERT INTO subcapitulos (capitulo_id, orden, titulo, slug) VALUES (?, 1, 'Sub 1', 'sub-1')",
+        (capitulo_id,),
+    )
+    subcapitulo_id = conn.execute("SELECT id FROM subcapitulos WHERE slug = 'sub-1'").fetchone()["id"]
+    conn.execute(
+        "INSERT INTO temas (subcapitulo_id, orden, titulo, slug) VALUES (?, 1, 'Tema 1', 'tema-1')",
+        (subcapitulo_id,),
+    )
+    conn.commit()
+    conn.close()
+
+    client = TestClient(main.app)
+    respuesta = client.get("/tema/tema-1")
+    assert respuesta.status_code == 200
+    assert '<details class="capitulo" open>' in respuesta.text

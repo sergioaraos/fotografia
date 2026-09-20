@@ -11,17 +11,29 @@
             <h1><a href="/">Aprender Fotografia de Cero</a></h1>
             {% for cap in arbol %}
             <details class="capitulo" {% if cap.capitulo.id == active_capitulo_id %}open{% endif %}>
-                <summary><a href="/capitulo/{{ cap.capitulo.slug }}">{{ cap.capitulo.titulo }}</a></summary>
+                <summary class="{% if pagina_actual_tipo == 'capitulo' and pagina_actual_id == cap.capitulo.id %}activo{% endif %}">
+                    <a href="/capitulo/{{ cap.capitulo.slug }}">{{ cap.capitulo.titulo }}</a>
+                </summary>
                 {% for sub in cap.subcapitulos %}
                 <details class="subcapitulo" {% if sub.subcapitulo.id == active_subcapitulo_id %}open{% endif %}>
-                    <summary><a href="/subcapitulo/{{ sub.subcapitulo.slug }}">{{ sub.subcapitulo.titulo }}</a></summary>
+                    <summary class="{% if pagina_actual_tipo == 'subcapitulo' and pagina_actual_id == sub.subcapitulo.id %}activo{% endif %}">
+                        <a href="/subcapitulo/{{ sub.subcapitulo.slug }}">{{ sub.subcapitulo.titulo }}</a>
+                    </summary>
                     <ul>
                         {% for t in sub.temas %}
                         <li class="{% if t.completado %}completado{% elif not t.desbloqueado %}bloqueado{% endif %} {% if t.tema.id == active_tema_id %}activo{% endif %}">
                             {% if t.desbloqueado %}
-                            <a href="/tema/{{ t.tema.slug }}">{% if t.completado %}&check;{% endif %} {{ t.tema.titulo }}</a>
+                            <a href="/tema/{{ t.tema.slug }}">
+                                {% if t.completado %}
+                                <svg class="icon-check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                                {% endif %}
+                                {{ t.tema.titulo }}
+                            </a>
                             {% else %}
-                            <span>&#128274; {{ t.tema.titulo }}</span>
+                            <span>
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                {{ t.tema.titulo }}
+                            </span>
                             {% endif %}
                         </li>
                         {% endfor %}
