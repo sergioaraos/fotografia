@@ -8,22 +8,32 @@
 <body>
     <div class="layout">
         <nav class="menu">
-            <h1>Aprender Fotografia de Cero</h1>
-            <ul>
-                {% for item in capitulos %}
-                <li class="{% if item.completado %}completado{% elif not item.desbloqueado %}bloqueado{% endif %}">
-                    {% if item.desbloqueado %}
-                    <a href="/capitulo/{{ item.capitulo.slug }}">
-                        {% if item.completado %}&check;{% endif %} {{ item.capitulo.titulo }}
-                    </a>
-                    {% else %}
-                    <span>&#128274; {{ item.capitulo.titulo }}</span>
-                    {% endif %}
-                </li>
+            <h1><a href="/">Aprender Fotografia de Cero</a></h1>
+            {% for cap in arbol %}
+            <details class="capitulo" {% if cap.capitulo.id == active_capitulo_id %}open{% endif %}>
+                <summary><a href="/capitulo/{{ cap.capitulo.slug }}">{{ cap.capitulo.titulo }}</a></summary>
+                {% for sub in cap.subcapitulos %}
+                <details class="subcapitulo" {% if sub.subcapitulo.id == active_subcapitulo_id %}open{% endif %}>
+                    <summary><a href="/subcapitulo/{{ sub.subcapitulo.slug }}">{{ sub.subcapitulo.titulo }}</a></summary>
+                    <ul>
+                        {% for t in sub.temas %}
+                        <li class="{% if t.completado %}completado{% elif not t.desbloqueado %}bloqueado{% endif %} {% if t.tema.id == active_tema_id %}activo{% endif %}">
+                            {% if t.desbloqueado %}
+                            <a href="/tema/{{ t.tema.slug }}">{% if t.completado %}&check;{% endif %} {{ t.tema.titulo }}</a>
+                            {% else %}
+                            <span>&#128274; {{ t.tema.titulo }}</span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </details>
                 {% else %}
-                <li class="vacio">Sin capitulos cargados todavia</li>
+                <p class="vacio">Sin subcapitulos todavia</p>
                 {% endfor %}
-            </ul>
+            </details>
+            {% else %}
+            <p class="vacio">Sin capitulos cargados todavia</p>
+            {% endfor %}
         </nav>
         <main class="contenido">
             {% block content %}{% endblock %}

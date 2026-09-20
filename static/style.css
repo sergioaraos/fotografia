@@ -16,16 +16,34 @@
     }
 }
 body { margin: 0; font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+a { color: var(--accent); }
 .layout { display: flex; min-height: 100vh; }
-.menu { width: 260px; padding: 1rem; border-right: 1px solid var(--border); }
-.menu h1 { font-size: 1.1rem; }
-.menu ul { list-style: none; padding: 0; }
-.menu li { padding: 0.4rem 0; }
+
+.menu { width: 280px; padding: 1rem; border-right: 1px solid var(--border); overflow-y: auto; }
+.menu h1 { font-size: 1.05rem; }
+.menu h1 a { color: var(--fg); text-decoration: none; }
+.menu details { margin-bottom: 0.25rem; }
+.menu details.subcapitulo { margin-left: 0.75rem; }
+.menu summary { cursor: pointer; padding: 0.2rem 0; }
+.menu ul { list-style: none; padding-left: 1.25rem; margin: 0.25rem 0; }
+.menu li { padding: 0.15rem 0; }
+.menu li a { text-decoration: none; }
 .menu li.bloqueado { color: var(--muted); }
 .menu li.completado a { color: green; }
-.contenido { flex: 1; padding: 2rem; max-width: 720px; }
-.ejercicio { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
-.ejercicio.completado { border-color: green; }
-fieldset { border: none; margin-bottom: 1rem; }
-.foto img { border-radius: 4px; margin-top: 0.5rem; }
+.menu li.activo a { font-weight: bold; }
+.menu .vacio { color: var(--muted); font-size: 0.9rem; margin-left: 1.25rem; }
+
+.contenido { flex: 1; padding: 2rem; max-width: 760px; }
+
+.tabs { display: flex; gap: 0.25rem; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+.tabs a { padding: 0.5rem 1rem; text-decoration: none; color: var(--fg); border-bottom: 2px solid transparent; }
+.tabs a.activo { border-bottom: 2px solid var(--accent); color: var(--accent); font-weight: bold; }
+
+.ejercicio, .evaluacion { border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
+.ejercicio.completado, .evaluacion.completado { border-color: green; }
+fieldset { border: none; margin-bottom: 1rem; padding: 0; }
+.foto { margin-bottom: 1rem; }
+.foto img { border-radius: 4px; display: block; margin-top: 0.5rem; }
 .bloqueado-msg { color: var(--muted); }
+.vacio { color: var(--muted); }
+.resultado { color: var(--muted); font-size: 0.9rem; }
